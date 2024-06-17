@@ -4,7 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.hhplus.tdd.api.controller.point.request.PointChargeRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +26,15 @@ class PointControllerTest {
     @Test
     void charge() throws Exception {
         // given
-        PointChargeRequest request = PointChargeRequest.builder()
-                                                       .amount(Long.valueOf(1000))
-                                                       .build();
+        Long userId = 1L;
+        long amount = 100L;
 
         // when // then
         mockMvc.perform(
-                    patch("/point/{id}/charge", 1)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                )
+                   patch("/point/{id}/charge", userId)
+                       .content(String.valueOf(amount))
+                       .contentType(MediaType.APPLICATION_JSON)
+               )
                .andDo(print())
                .andExpect(status().isOk());
     }
