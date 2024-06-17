@@ -1,5 +1,8 @@
 package io.hhplus.tdd.point;
 
+import lombok.Getter;
+
+@Getter
 public record UserPoint(
         long id,
         long point,
