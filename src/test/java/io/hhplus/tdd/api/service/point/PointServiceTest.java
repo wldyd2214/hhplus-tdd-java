@@ -22,7 +22,7 @@ class PointServiceTest {
         long amount = 1000L;
 
         // when
-        UserPoint userPoint = pointService.charge(id, amount);
+        UserPoint userPoint = pointService.chargeUserPoint(id, amount);
 
         // then
         assertThat(userPoint.point()).isNotNull();

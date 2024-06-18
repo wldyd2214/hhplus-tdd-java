@@ -31,7 +31,8 @@ public class PointController {
     public UserPoint point(
             @PathVariable long id
     ) {
-        return new UserPoint(0, 0, 0);
+        return pointService.getUserPoint();
+        //return new UserPoint(0, 0, 0);
     }
 
     /**
@@ -55,7 +56,7 @@ public class PointController {
             @Positive(message = "양수의 값만 충전할 수 있습니다.")
             long amount
     ) {
-        return ApiResponse.ok(pointService.charge(id, amount));
+        return ApiResponse.ok(pointService.chargeUserPoint(id, amount));
     }
 
     /**

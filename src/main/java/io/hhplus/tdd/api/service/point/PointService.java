@@ -12,11 +12,11 @@ public class PointService {
 
     private final PointRepository pointRepository;
 
-    public UserPoint charge(long id, long amount) {
-        return UserPointCharge(id, amount);
+    public UserPoint chargeUserPoint(long id, long amount) {
+        return insertUserPointOrUpdate(id, amount);
     }
 
-    public UserPoint UserPointCharge(long id, long amount) {
+    public UserPoint insertUserPointOrUpdate(long id, long amount) {
         return pointRepository.insertOrUpdate(id, amount);
     }
 }
