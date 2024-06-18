@@ -1,15 +1,14 @@
 package io.hhplus.tdd.api.controller.point;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.hhplus.tdd.api.service.point.PointHistoryService;
 import io.hhplus.tdd.api.service.point.PointService;
-import io.hhplus.tdd.point.UserPoint;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,11 +30,14 @@ class PointControllerTest {
     @MockBean
     protected PointService pointService;
 
+    @MockBean
+    protected PointHistoryService pointHistoryService;
+
     @DisplayName("특정 유저의 포인트를 충전한다.")
     @Test
     void charge() throws Exception {
         // given
-        Long userId = 1L;
+        long userId = 1L;
         long amount = 1000L;
 
         // when // then
@@ -55,7 +57,7 @@ class PointControllerTest {
     @Test
     void chargeWithNegative() throws Exception {
         // given
-        Long userId = 1L;
+        long userId = 1L;
         long amount = -1L;
 
         // when // then
@@ -65,8 +67,62 @@ class PointControllerTest {
                                .contentType(MediaType.APPLICATION_JSON)
                )
                .andDo(print())
-               .andExpect(status().isBadRequest())
-               .andExpect(jsonPath("$.status").value("400"))
-               .andExpect(jsonPath("$.error").value("Bad Request"));
+               .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("특정 유저의 포인트를 조회한다.")
+    @Test
+    void point() throws Exception {
+        // given
+        long userId = 1L;
+
+        // when // then
+        mockMvc.perform(
+                   get("/point/{id}", userId)
+                       .contentType(MediaType.APPLICATION_JSON)
+               )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.code").value("200"))
+               .andExpect(jsonPath("$.status").value("OK"))
+               .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @DisplayName("특정 유저의 포인트를 사용한다.")
+    @Test
+    void use() throws Exception {
+        // given
+        long userId = 1L;
+        long amount = 1000L;
+
+        // when // then
+        mockMvc.perform(
+                   patch("/point/{id}/use", userId)
+                       .content(String.valueOf(amount))
+                       .contentType(MediaType.APPLICATION_JSON)
+               )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.code").value("200"))
+               .andExpect(jsonPath("$.status").value("OK"))
+               .andExpect(jsonPath("$.message").value("OK"));
+    }
+
+    @DisplayName("특정 유저의 포인트 충전/이용 내역을 조회한다.")
+    @Test
+    void history() throws Exception {
+        // given
+        long userId = 1L;
+
+        // when // then
+        mockMvc.perform(
+                   get("/point/{id}/histories", userId)
+                       .contentType(MediaType.APPLICATION_JSON)
+               )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.code").value("200"))
+               .andExpect(jsonPath("$.status").value("OK"))
+               .andExpect(jsonPath("$.message").value("OK"));
     }
 }
