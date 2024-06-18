@@ -1,6 +1,7 @@
 package io.hhplus.tdd.api.controller.point;
 
 import io.hhplus.tdd.api.ApiResponse;
+import io.hhplus.tdd.api.service.point.PointHistoryService;
 import io.hhplus.tdd.api.service.point.PointService;
 import io.hhplus.tdd.point.PointHistory;
 import io.hhplus.tdd.point.UserPoint;
@@ -23,26 +24,26 @@ public class PointController {
     private static final Logger log = LoggerFactory.getLogger(PointController.class);
 
     private final PointService pointService;
+    private final PointHistoryService pointHistoryService;
 
     /**
      * TODO - 특정 유저의 포인트를 조회하는 기능을 작성해주세요.
      */
     @GetMapping("{id}")
-    public UserPoint point(
+    public ApiResponse<UserPoint> point(
             @PathVariable long id
     ) {
-        return pointService.getUserPoint();
-        //return new UserPoint(0, 0, 0);
+        return ApiResponse.ok(pointService.getUserPoint(id));
     }
 
     /**
      * TODO - 특정 유저의 포인트 충전/이용 내역을 조회하는 기능을 작성해주세요.
      */
     @GetMapping("{id}/histories")
-    public List<PointHistory> history(
+    public ApiResponse<List<PointHistory>> history(
             @PathVariable long id
     ) {
-        return List.of();
+        return ApiResponse.ok(pointHistoryService.getUserPointHistory(id));
     }
 
     /**
@@ -63,10 +64,10 @@ public class PointController {
      * TODO - 특정 유저의 포인트를 사용하는 기능을 작성해주세요.
      */
     @PatchMapping("{id}/use")
-    public UserPoint use(
+    public ApiResponse<UserPoint> use(
             @PathVariable long id,
             @RequestBody long amount
     ) {
-        return new UserPoint(0, 0, 0);
+        return ApiResponse.ok(pointService.userPointUse(id, amount));
     }
 }
