@@ -7,8 +7,6 @@ import static org.assertj.core.api.Assertions.tuple;
 
 import io.hhplus.tdd.point.PointHistory;
 import io.hhplus.tdd.point.PointHistoryRepository;
-import io.hhplus.tdd.point.TransactionType;
-import io.hhplus.tdd.point.UserPoint;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -34,11 +34,11 @@ public class PointHistoryServiceTest {
         pointHistoryRepository.insert(2L, 3000L, USE, now);
 
         // when
-        List<PointHistory> pointHistorieList = pointHistoryService.getUserPointHistory(1L);
+        List<PointHistory> pointHistoryList = pointHistoryService.getUserPointHistory(1L);
 
         // then
-        assertThat(pointHistorieList).hasSize(2);
-        assertThat(pointHistorieList).extracting( "userId", "amount", "type", "updateMillis")
+        assertThat(pointHistoryList).hasSize(2);
+        assertThat(pointHistoryList).extracting( "userId", "amount", "type", "updateMillis")
                              .containsExactlyInAnyOrder(
                                  tuple(1L, 2000L, CHARGE, now),
                                  tuple(1L, 1000L, USE, now)
