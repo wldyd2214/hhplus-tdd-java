@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class PointRepositoryTest {
 
+    // 포인트 레포 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
+
     @Autowired
     private PointRepository PointRepository;
 

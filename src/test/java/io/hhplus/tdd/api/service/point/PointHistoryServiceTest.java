@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class PointHistoryServiceTest {
 
+    // 히스토리 서비스 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
+
     @Autowired
     private PointHistoryRepository pointHistoryRepository;
 

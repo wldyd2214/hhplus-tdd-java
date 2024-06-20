@@ -37,6 +37,7 @@ public class PointService {
         return userPoint;
     }
 
+    // userPointUse 메소드에서 부터 호출되는 userPointUsedProcess 비지니스 로직의 클린 코드 리뷰를 받고 싶습니다.
     private UserPoint userPointUsedProcess(long id, long amount) {
         UserPoint userPoint = selectUserPointById(id);
         if (userPoint.point() < amount)

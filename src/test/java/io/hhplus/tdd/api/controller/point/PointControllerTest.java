@@ -21,6 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PointController.class)
 class PointControllerTest {
 
+    // 컨트롤러 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
+
     @Autowired
     protected MockMvc mockMvc;
 
