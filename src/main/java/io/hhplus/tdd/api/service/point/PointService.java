@@ -8,7 +8,6 @@ import io.hhplus.tdd.point.PointHistoryRepository;
 import io.hhplus.tdd.point.PointRepository;
 import io.hhplus.tdd.point.UserPoint;
 
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
