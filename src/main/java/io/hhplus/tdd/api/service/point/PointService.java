@@ -43,7 +43,9 @@ public class PointService {
 
     private synchronized UserPoint userPointUsedProcess(long id, long amount) {
         UserPoint userPoint = selectUserPointById(id);
+      
         System.out.println(String.format("[userPointUsedProcess] - %d번 유저의 %d 포인트가 존재하고 %d 만큼 사용하고 싶어요.", id, userPoint.point(), amount));
+      
         if (userPoint.point() < amount)
             throw new IllegalArgumentException("보유 포인트가 부족합니다.");
 
