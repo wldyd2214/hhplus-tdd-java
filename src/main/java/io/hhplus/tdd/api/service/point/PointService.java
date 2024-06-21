@@ -38,6 +38,7 @@ public class PointService {
         return insertUserPointOrUpdate(id, sumPoint);
     }
 
+    // TODO: userPointUse 메소드에서 부터 호출되는 userPointUsedProcess 비지니스 로직의 클린 코드 리뷰를 받고 싶습니다.
     private UserPoint userPointUsedProcess(long id, long amount) {
         UserPoint userPoint = selectUserPointById(id);
         System.out.println(String.format("%d 유저의 %d 포인트가 존재하고 %d 만큼 사용하고 싶어요.", userPoint.point(), amount));

@@ -19,6 +19,8 @@ class PointHistoryRepositoryTest {
     @Autowired
     private PointHistoryRepository pointHistoryRepository;
 
+    // TODO: 히스토리 서비스 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
+
     @DisplayName("포인트 히스토리 정보를 등록한다.")
     @Test
     void insert() {

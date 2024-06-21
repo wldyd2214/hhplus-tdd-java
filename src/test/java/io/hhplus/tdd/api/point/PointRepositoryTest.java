@@ -17,6 +17,8 @@ class PointRepositoryTest {
     @Autowired
     private PointRepository PointRepository;
 
+    // TODO: 포인트 레포 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
+
     @DisplayName("특정 유저의 포인트를 저장한다.")
     @Test
     void insertOrUpdate() {
