@@ -33,6 +33,8 @@ class PointControllerTest {
     @MockBean
     protected PointHistoryService pointHistoryService;
 
+    // TODO: 컨트롤러 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
+
     @DisplayName("특정 유저의 포인트를 충전한다.")
     @Test
     void charge() throws Exception {

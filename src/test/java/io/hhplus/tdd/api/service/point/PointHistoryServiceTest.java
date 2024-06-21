@@ -23,6 +23,8 @@ class PointHistoryServiceTest {
     @Autowired
     private PointHistoryService pointHistoryService;
 
+    // TODO: 히스토리 서비스 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
+
     @DisplayName("특정 유저의 포인트 충전/이용 내역을 조회한다.")
     @Test
     void getUserPointHistory() {

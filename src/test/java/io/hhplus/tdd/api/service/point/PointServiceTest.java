@@ -29,6 +29,8 @@ class PointServiceTest {
     @Autowired
     private PointService pointService;
 
+    // TODO: 포인트 서비스 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
+
     @DisplayName("특정 유저의 포인트를 충전한다.")
     @Test
     void charge() {
