@@ -149,6 +149,7 @@ class PointServiceTest {
             .hasMessage("보유 포인트가 부족합니다.");
     }
 
+    // TODO: 사용자 포인트 충전/사용 동시성 테스트 추가
     @DisplayName("사용자 포인트 충전/사용 동시성 테스트")
     @Test
     void userPointAsync() {

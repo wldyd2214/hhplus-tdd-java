@@ -33,6 +33,7 @@ public class PointService {
         return userPointUsedProcess(id, amount);
     }
 
+    // TODO: synchronized 키워드 추가
     private synchronized UserPoint chargeUserPointProcess(long id, long amount) {
         UserPoint userPoint = selectUserPointById(id);
         long sumPoint = userPoint.point() + amount;
@@ -41,6 +42,7 @@ public class PointService {
         return insertUserPointOrUpdate(id, sumPoint);
     }
 
+    // TODO: synchronized 키워드 추가
     private synchronized UserPoint userPointUsedProcess(long id, long amount) {
         UserPoint userPoint = selectUserPointById(id);
       
