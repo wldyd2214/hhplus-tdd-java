@@ -11,6 +11,7 @@ import io.hhplus.tdd.point.PointHistoryRepository;
 import io.hhplus.tdd.point.PointRepository;
 import io.hhplus.tdd.point.UserPoint;
 import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,23 @@ class PointServiceTest {
         assertThat(userPoint.point()).isNotNull();
         assertThat(userPoint).extracting("id", "point")
                              .contains(id, amount);
+    }
+
+    @DisplayName("특정 유저의 포인트 충전시 기존 금액과 합산 되어 충전되는지 확인한다.")
+    @Test
+    void chargePlus() {
+        // given
+        long id = 1;
+        long amount = 1000;
+        pointRepository.insertOrUpdate(id, 10000);
+
+        // when
+        UserPoint userPoint = pointService.chargeUserPoint(id, amount);
+
+        // then
+        assertThat(userPoint.point()).isNotNull();
+        assertThat(userPoint).extracting("id", "point")
+                             .contains(id, amount + 10000);
     }
 
     @DisplayName("포인트를 충전시 히스토리 정보가 잘 적재 되었는지 확인한다.")

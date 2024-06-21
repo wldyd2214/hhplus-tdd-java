@@ -32,20 +32,21 @@ public class PointService {
     }
 
     private UserPoint chargeUserPointProcess(long id, long amount) {
-        UserPoint userPoint = insertUserPointOrUpdate(id, amount);
+        UserPoint userPoint = selectUserPointById(id);
+        long sumPoint = userPoint.point() + amount;
         insertPointChargeHistory(id, amount);
-        return userPoint;
+        return insertUserPointOrUpdate(id, sumPoint);
     }
 
     private UserPoint userPointUsedProcess(long id, long amount) {
         UserPoint userPoint = selectUserPointById(id);
+        System.out.println(String.format("%d 유저의 %d 포인트가 존재하고 %d 만큼 사용하고 싶어요.", userPoint.point(), amount));
         if (userPoint.point() < amount)
             throw new IllegalArgumentException("보유 포인트가 부족합니다.");
 
         long usedPoint = usedPointCalculator(userPoint.point(), amount);
 
         UserPoint resultUserPoint = insertUserPointOrUpdate(userPoint.id(), usedPoint);
-
         insertPointUseHistory(id, amount);
 
         return resultUserPoint;
