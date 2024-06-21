@@ -11,6 +11,8 @@ import io.hhplus.tdd.point.UserPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 @RequiredArgsConstructor
 @Service
 public class PointService {
@@ -31,21 +33,23 @@ public class PointService {
         return userPointUsedProcess(id, amount);
     }
 
-    private UserPoint chargeUserPointProcess(long id, long amount) {
-        UserPoint userPoint = insertUserPointOrUpdate(id, amount);
+    private synchronized UserPoint chargeUserPointProcess(long id, long amount) {
+        UserPoint userPoint = selectUserPointById(id);
+        long sumPoint = userPoint.point() + amount;
         insertPointChargeHistory(id, amount);
-        return userPoint;
+        System.out.println(String.format("[chargeUserPointProcess] - %d번 유저의 포인트는 총 %d 입니다. ", id, sumPoint));
+        return insertUserPointOrUpdate(id, sumPoint);
     }
 
-    private UserPoint userPointUsedProcess(long id, long amount) {
+    private synchronized UserPoint userPointUsedProcess(long id, long amount) {
         UserPoint userPoint = selectUserPointById(id);
+        System.out.println(String.format("[userPointUsedProcess] - %d번 유저의 %d 포인트가 존재하고 %d 만큼 사용하고 싶어요.", id, userPoint.point(), amount));
         if (userPoint.point() < amount)
             throw new IllegalArgumentException("보유 포인트가 부족합니다.");
 
         long usedPoint = usedPointCalculator(userPoint.point(), amount);
 
         UserPoint resultUserPoint = insertUserPointOrUpdate(userPoint.id(), usedPoint);
-
         insertPointUseHistory(id, amount);
 
         return resultUserPoint;
