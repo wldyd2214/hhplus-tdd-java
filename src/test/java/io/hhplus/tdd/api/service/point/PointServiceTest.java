@@ -11,7 +11,7 @@ import io.hhplus.tdd.point.PointHistoryRepository;
 import io.hhplus.tdd.point.PointRepository;
 import io.hhplus.tdd.point.UserPoint;
 import java.util.List;
-
+import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,5 +147,31 @@ class PointServiceTest {
         assertThatThrownBy(() -> pointService.userPointUse(1L, 1001L))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("보유 포인트가 부족합니다.");
+    }
+
+    @DisplayName("사용자 포인트 충전/사용 동시성 테스트")
+    @Test
+    void userPointAsync() {
+        // given
+        long id = 1;
+        pointService.chargeUserPoint(id, 10000);
+
+        // when
+        CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> {
+                    pointService.userPointUse(id, 1000);
+                }),
+                CompletableFuture.runAsync(() -> {
+                    pointService.chargeUserPoint(id, 300);
+
+                }),
+                CompletableFuture.runAsync(() -> {
+                    pointService.userPointUse(id, 200);
+                })
+        ).join();
+
+        UserPoint userPoint = pointService.getUserPoint(id);
+        System.out.println("사용자 포인트: " + userPoint.point());
+        assertThat(userPoint.point()).isEqualTo(10000 - 1000 + 300 - 200);
     }
 }
