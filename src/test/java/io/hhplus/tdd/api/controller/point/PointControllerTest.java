@@ -1,5 +1,8 @@
 package io.hhplus.tdd.api.controller.point;
 
+import static io.hhplus.tdd.point.TransactionType.CHARGE;
+import static io.hhplus.tdd.point.TransactionType.USE;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -7,6 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.hhplus.tdd.api.service.point.PointHistoryService;
 import io.hhplus.tdd.api.service.point.PointService;
+import io.hhplus.tdd.point.PointHistory;
+import io.hhplus.tdd.point.TransactionType;
+import io.hhplus.tdd.point.UserPoint;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +47,12 @@ class PointControllerTest {
     @Test
     void charge() throws Exception {
         // given
-        long userId = 1L;
-        long amount = 1000L;
+        long userId = 1;
+        long amount = 1000;
+        long updateMillis = System.currentTimeMillis();
+
+        UserPoint mockUser = new UserPoint(userId, amount, updateMillis);
+        given(pointService.chargeUserPoint(userId, amount)).willReturn(mockUser);
 
         // when // then
         mockMvc.perform(
@@ -50,18 +61,23 @@ class PointControllerTest {
                        .contentType(MediaType.APPLICATION_JSON)
                )
                .andDo(print())
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.code").value("200"))
-               .andExpect(jsonPath("$.status").value("OK"))
-               .andExpect(jsonPath("$.message").value("OK"));
+               .andExpectAll(
+                   status().isOk(),
+                   jsonPath("$.code").value("200"),
+                   jsonPath("$.status").value("OK"),
+                   jsonPath("$.message").value("OK"),
+                   jsonPath("$.data.id").value(userId),
+                   jsonPath("$.data.point").value(amount),
+                   jsonPath("$.data.updateMillis").value(updateMillis)
+               );
     }
 
     @DisplayName("음수 값을 충전하려는 경우 예외가 발생한다.")
     @Test
     void chargeWithNegative() throws Exception {
         // given
-        long userId = 1L;
-        long amount = -1L;
+        long userId = 1;
+        long amount = -1;
 
         // when // then
         mockMvc.perform(
@@ -70,14 +86,25 @@ class PointControllerTest {
                                .contentType(MediaType.APPLICATION_JSON)
                )
                .andDo(print())
-               .andExpect(status().isBadRequest());
+               .andExpectAll(
+                   status().isBadRequest(),
+                   jsonPath("$.code").value("400"),
+                   jsonPath("$.status").value("BAD_REQUEST"),
+                   jsonPath("$.message").value("양수의 값만 충전할 수 있습니다."),
+                   jsonPath("$.data").isEmpty()
+               );
     }
 
     @DisplayName("특정 유저의 포인트를 조회한다.")
     @Test
     void point() throws Exception {
         // given
-        long userId = 1L;
+        long userId = 1;
+        long amount = 1000;
+        long updateMillis = System.currentTimeMillis();
+
+        UserPoint mockUser = new UserPoint(userId, amount, updateMillis);
+        given(pointService.getUserPoint(userId)).willReturn(mockUser);
 
         // when // then
         mockMvc.perform(
@@ -85,18 +112,28 @@ class PointControllerTest {
                        .contentType(MediaType.APPLICATION_JSON)
                )
                .andDo(print())
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.code").value("200"))
-               .andExpect(jsonPath("$.status").value("OK"))
-               .andExpect(jsonPath("$.message").value("OK"));
+               .andExpectAll(
+                   status().isOk(),
+                   jsonPath("$.code").value("200"),
+                   jsonPath("$.status").value("OK"),
+                   jsonPath("$.message").value("OK"),
+                   jsonPath("$.data.id").value(userId),
+                   jsonPath("$.data.point").value(amount),
+                   jsonPath("$.data.updateMillis").value(updateMillis)
+               );
     }
 
     @DisplayName("특정 유저의 포인트를 사용한다.")
     @Test
     void use() throws Exception {
         // given
-        long userId = 1L;
-        long amount = 1000L;
+        long userId = 1;
+        long amount = 1000;
+        long updateMillis = System.currentTimeMillis();
+        long point = 0;
+
+        UserPoint mockUser = new UserPoint(userId, point, updateMillis);
+        given(pointService.userPointUse(userId, amount)).willReturn(mockUser);
 
         // when // then
         mockMvc.perform(
@@ -105,17 +142,31 @@ class PointControllerTest {
                        .contentType(MediaType.APPLICATION_JSON)
                )
                .andDo(print())
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.code").value("200"))
-               .andExpect(jsonPath("$.status").value("OK"))
-               .andExpect(jsonPath("$.message").value("OK"));
+               .andExpectAll(
+                   status().isOk(),
+                   jsonPath("$.code").value("200"),
+                   jsonPath("$.status").value("OK"),
+                   jsonPath("$.message").value("OK"),
+                   jsonPath("$.data.id").value(userId),
+                   jsonPath("$.data.point").value(point),
+                   jsonPath("$.data.updateMillis").value(updateMillis)
+               );
     }
 
     @DisplayName("특정 유저의 포인트 충전/이용 내역을 조회한다.")
     @Test
     void history() throws Exception {
         // given
-        long userId = 1L;
+        long userId = 1;
+        long updateMillis = System.currentTimeMillis();
+
+        List<PointHistory> mockPointHistories = List.of(
+            createPointHistory(1, userId, 1000, CHARGE, updateMillis),
+            createPointHistory(2, userId, 500, USE, updateMillis),
+            createPointHistory(3, userId, 500, CHARGE, updateMillis)
+        );
+
+        given(pointHistoryService.getUserPointHistory(userId)).willReturn(mockPointHistories);
 
         // when // then
         mockMvc.perform(
@@ -123,9 +174,20 @@ class PointControllerTest {
                        .contentType(MediaType.APPLICATION_JSON)
                )
                .andDo(print())
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.code").value("200"))
-               .andExpect(jsonPath("$.status").value("OK"))
-               .andExpect(jsonPath("$.message").value("OK"));
+               .andExpectAll(
+                   status().isOk(),
+                   jsonPath("$.code").value("200"),
+                   jsonPath("$.status").value("OK"),
+                   jsonPath("$.message").value("OK"),
+                   jsonPath("$.data.[0].id").value(1),
+                   jsonPath("$.data.[0].userId").value(userId),
+                   jsonPath("$.data.[0].amount").value(1000),
+                   jsonPath("$.data.[0].type").value(CHARGE.name()),
+                   jsonPath("$.data.[0].updateMillis").value(updateMillis)
+               );
+    }
+
+    private PointHistory createPointHistory(long id, long userid, long amount, TransactionType type, long updateMillis) {
+        return new PointHistory(id, userid, amount, type, updateMillis);
     }
 }

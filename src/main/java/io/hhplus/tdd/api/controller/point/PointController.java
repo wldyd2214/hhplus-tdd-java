@@ -1,6 +1,7 @@
 package io.hhplus.tdd.api.controller.point;
 
 import io.hhplus.tdd.api.ApiResponse;
+import io.hhplus.tdd.api.controller.point.request.PointChargeRequest;
 import io.hhplus.tdd.api.service.point.PointHistoryService;
 import io.hhplus.tdd.api.service.point.PointService;
 import io.hhplus.tdd.point.PointHistory;
@@ -10,8 +11,10 @@ import java.time.LocalDateTime;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,13 +54,10 @@ public class PointController {
      */
     @PatchMapping("{id}/charge")
     public ApiResponse<UserPoint> charge(
-            @PathVariable long id,
-            @RequestBody
-            @Valid
-            @Positive(message = "양수의 값만 충전할 수 있습니다.")
-            long amount
+        @PathVariable long id,
+        @Valid @RequestBody PointChargeRequest reqVo
     ) {
-        return ApiResponse.ok(pointService.chargeUserPoint(id, amount));
+        return ApiResponse.ok(pointService.chargeUserPoint(id, reqVo.getAmount()));
     }
 
     /**

@@ -3,5 +3,5 @@ PATCH localhost:8080/point/1/charge
 Content-Type: application/json
 
 {
-  "amount": 1000
+  "amount": -1
 }

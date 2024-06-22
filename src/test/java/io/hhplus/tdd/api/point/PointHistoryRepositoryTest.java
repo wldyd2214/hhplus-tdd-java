@@ -19,36 +19,38 @@ class PointHistoryRepositoryTest {
     @Autowired
     private PointHistoryRepository pointHistoryRepository;
 
-    // TODO: 히스토리 서비스 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
-
     @DisplayName("포인트 히스토리 정보를 등록한다.")
     @Test
     void insert() {
         // given
+        long userId = 2;
+        long amount = 1000;
         long now = System.currentTimeMillis() % 1000;
 
         // when
-        PointHistory pointHistory = pointHistoryRepository.insert(1L, 1000L, CHARGE, now);
+        PointHistory pointHistory = pointHistoryRepository.insert(userId, amount, CHARGE, now);
 
         // then
         assertThat(pointHistory).extracting("userId", "amount", "type", "updateMillis")
-                                .contains(1L, 1000L, CHARGE, now);
+                                .contains(userId, amount, CHARGE, now);
     }
 
     @DisplayName("포인트 히스토리 정보를 조회한다.")
     @Test
     void selectAllByUserId() {
         // given
+        long userId = 1;
         long now = System.currentTimeMillis() % 1000;
-        pointHistoryRepository.insert(1L, 2000L, CHARGE, now);
-        pointHistoryRepository.insert(1L, 1000L, USE, now);
-        pointHistoryRepository.insert(2L, 3000L, CHARGE, now);
+        pointHistoryRepository.insert(userId, 2000, CHARGE, now);
+        pointHistoryRepository.insert(userId, 1000, USE, now);
+//        pointHistoryRepository.insert(2, 3000, CHARGE, now);
 
         // when
-        List<PointHistory> pointHistoryList = pointHistoryRepository.selectAllByUserId(1L);
+        List<PointHistory> pointHistoryList = pointHistoryRepository.selectAllByUserId(userId);
 
         // then
-        assertThat(pointHistoryList).extracting( "userId", "amount", "type")
+        assertThat(pointHistoryList).hasSize(2)
+                                    .extracting( "userId", "amount", "type")
                                     .containsExactlyInAnyOrder(
                                         tuple(1L, 2000L, CHARGE),
                                         tuple(1L, 1000L, USE)
