@@ -31,6 +31,8 @@ public class PointService {
         return userPointUsedProcess(id, amount);
     }
 
+    // Q: 불필요하게 private 으로 함수를 다 쪼개놓아서 오히려 테스트/가독성 측면에서 좋지 않은 방향성으로 보입니다.
+
     private UserPoint chargeUserPointProcess(long id, long amount) {
         UserPoint userPoint = selectUserPointById(id);
         long sumPoint = userPoint.point() + amount;
@@ -38,13 +40,14 @@ public class PointService {
         return insertUserPointOrUpdate(id, sumPoint);
     }
 
-    // TODO: userPointUse 메소드에서 부터 호출되는 userPointUsedProcess 비지니스 로직의 클린 코드 리뷰를 받고 싶습니다.
     private UserPoint userPointUsedProcess(long id, long amount) {
         UserPoint userPoint = selectUserPointById(id);
         System.out.println(String.format("%d 유저의 %d 포인트가 존재하고 %d 만큼 사용하고 싶어요.", userPoint.point(), amount));
         if (userPoint.point() < amount)
             throw new IllegalArgumentException("보유 포인트가 부족합니다.");
 
+        // 또한 amount 도 음수이고, user 의 포인트 또한 음수인 경우 ?
+        // validation 을 통과해 포인트를 마치 충전하는 것과 같은 calculation 이 일어날 텐데, 이에 대한 고려가 부족합니다.
         long usedPoint = usedPointCalculator(userPoint.point(), amount);
 
         UserPoint resultUserPoint = insertUserPointOrUpdate(userPoint.id(), usedPoint);

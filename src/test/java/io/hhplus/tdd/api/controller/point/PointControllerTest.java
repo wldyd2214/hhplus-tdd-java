@@ -33,7 +33,8 @@ class PointControllerTest {
     @MockBean
     protected PointHistoryService pointHistoryService;
 
-    // TODO: 컨트롤러 테스트 항목들에 대한 코드 리뷰를 받고 싶습니다.
+    // 컨트롤러 단위 테스트의 경우, jsonPath 로 각 항목들을 점검하게 되면 개발자의 실수에 의해 누락값이 존재할 수 있고 누락된 경우,
+    // 나머지 검증값이 같다면 테스트 통과로 이어지는 불상사가 발생해요 ( Edge Case 가 존재하지만 테스트는 통과해 서비스의 오류로 이어질 수 있음 )
 
     @DisplayName("특정 유저의 포인트를 충전한다.")
     @Test
